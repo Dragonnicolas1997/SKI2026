@@ -58,6 +58,8 @@ def check_bingo(completed_indices: list[int]) -> tuple[bool, list[list[int]]]:
 
 def compress_image(file_bytes: bytes, max_size: int = 1200) -> bytes:
     img = Image.open(io.BytesIO(file_bytes))
+    from PIL import ImageOps
+    img = ImageOps.exif_transpose(img)
     if img.mode in ("RGBA", "P"):
         img = img.convert("RGB")
     img.thumbnail((max_size, max_size), Image.LANCZOS)
