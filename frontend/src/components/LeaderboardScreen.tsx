@@ -147,7 +147,7 @@ export default function LeaderboardScreen({ playerId }: Props) {
       {/* Top photos tab */}
       {tab === "photos" && (
         <div className="flex-1 p-4 space-y-3">
-          {topPhotos.map((p, i) => (
+          {topPhotos.filter((p) => p.likes_count > 0).map((p, i) => (
             <div
               key={p.id}
               className="bg-white rounded-2xl overflow-hidden shadow-sm"
@@ -202,7 +202,7 @@ export default function LeaderboardScreen({ playerId }: Props) {
             </div>
           ))}
 
-          {topPhotos.length === 0 && (
+          {topPhotos.filter((p) => p.likes_count > 0).length === 0 && (
             <div className="text-center text-brand-gray py-12">
               Aucune photo pour le moment 📸
             </div>
