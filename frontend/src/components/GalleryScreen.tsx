@@ -63,9 +63,6 @@ export default function GalleryScreen({ playerId }: Props) {
     if (p.photo_type === "defi" && p.challenge_text) {
       return (<>a complété : {p.challenge_text}</>);
     }
-    if (p.caption) {
-      return (<>{p.caption}</>);
-    }
     return (<>a partagé une photo 📸</>);
   };
 
@@ -130,6 +127,9 @@ export default function GalleryScreen({ playerId }: Props) {
                 <span className="font-semibold text-brand-text">{p.player_pseudo}</span>{" "}
                 {getCaption(p)}
               </p>
+              {p.caption && (
+                <p className="text-sm text-brand-text mt-1">{p.caption}</p>
+              )}
             </div>
           </div>
         ))}

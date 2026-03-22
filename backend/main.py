@@ -208,6 +208,25 @@ async def complete_defi(
     return {"status": "ok", "completion_id": completion.id}
 
 
+@app.delete("/api/defi/{completion_id}")
+async def delete_defi(completion_id: int, player_id: int, db: Session = Depends(get_db)):
+    comp = db.query(Completion).filter(Completion.id == completion_id).first()
+    if not comp:
+        raise HTTPException(status_code=404, detail="Complétion non trouvée")
+    if comp.player_id != player_id:
+        raise HTTPException(status_code=403, detail="Non autorisé")
+    # Delete associated likes
+    db.query(Like).filter(Like.completion_id == completion_id).delete()
+    # Delete photo file
+    if comp.photo_path:
+        filepath = os.path.join(UPLOAD_DIR, comp.photo_path)
+        if os.path.exists(filepath):
+            os.remove(filepath)
+    db.delete(comp)
+    db.commit()
+    return {"status": "ok"}
+
+
 @app.get("/api/classement")
 async def get_classement(db: Session = Depends(get_db)):
     players = db.query(Player).all()

@@ -45,6 +45,10 @@ export function completeDefi(
   return request(`${API}/defi/complete`, { method: "POST", body: fd });
 }
 
+export function deleteDefi(completionId: number, playerId: number) {
+  return request(`${API}/defi/${completionId}?player_id=${playerId}`, { method: "DELETE" });
+}
+
 export function getClassement() {
   return request(`${API}/classement`);
 }

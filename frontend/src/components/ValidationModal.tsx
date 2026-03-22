@@ -49,10 +49,10 @@ export default function ValidationModal({ challenge, playerId, onClose, onSucces
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center"
+      className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center overflow-y-auto"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto">
+      <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-md my-auto sm:my-8">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-slate-100">
           <h3 className="font-bold text-brand-text">Valider ce défi</h3>

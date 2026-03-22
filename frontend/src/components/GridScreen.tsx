@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { CheckCircle2, ImagePlus, Users, X } from "lucide-react";
+import { CheckCircle2, ImagePlus, Users, X, Trash2, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { getGrille, uploadFreePhoto, getClassement } from "../api";
+import { getGrille, uploadFreePhoto, getClassement, deleteDefi } from "../api";
 import type { GrilleData, Challenge } from "../types";
 import ValidationModal from "./ValidationModal";
 
@@ -85,6 +85,9 @@ export default function GridScreen({ playerId }: Props) {
   const [playerCount, setPlayerCount] = useState(0);
   const [freePhoto, setFreePhoto] = useState<{ file: File; preview: string } | null>(null);
   const [freeCaption, setFreeCaption] = useState("");
+  const [completedChallenge, setCompletedChallenge] = useState<Challenge | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const pendingReopen = useRef<Challenge | null>(null);
   const freePhotoRef = useRef<HTMLInputElement>(null);
 
   const fetchData = useCallback(async () => {
@@ -157,7 +160,7 @@ export default function GridScreen({ playerId }: Props) {
           {data.challenges.map((c) => (
             <button
               key={c.index}
-              onClick={() => !c.completed && setSelectedChallenge(c)}
+              onClick={() => c.completed ? setCompletedChallenge(c) : setSelectedChallenge(c)}
               className={`bingo-card shadow-md ${CARD_COLORS[c.index]} ${c.completed ? "completed" : ""}`}
             >
               <img src="/logo.png" alt="" className="card-logo" />
@@ -216,10 +219,10 @@ export default function GridScreen({ playerId }: Props) {
       {/* Free photo preview modal */}
       {freePhoto && (
         <div
-          className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center"
+          className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center overflow-y-auto"
           onClick={(e) => e.target === e.currentTarget && setFreePhoto(null)}
         >
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto">
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-md my-auto sm:my-8">
             <div className="flex items-center justify-between p-4 border-b border-slate-100">
               <h3 className="font-bold text-brand-text">Partager une photo</h3>
               <button onClick={() => setFreePhoto(null)} className="p-2 text-brand-gray hover:text-brand-text">
@@ -263,6 +266,92 @@ export default function GridScreen({ playerId }: Props) {
                   className="flex-1 py-3 glass-button text-white rounded-xl font-bold disabled:opacity-50"
                 >
                   {uploading ? "Envoi..." : "Publier ✅"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Completed challenge modal */}
+      {completedChallenge && (
+        <div
+          className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center overflow-y-auto"
+          onClick={(e) => e.target === e.currentTarget && setCompletedChallenge(null)}
+        >
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-md my-auto sm:my-8">
+            <div className="flex items-center justify-between p-4 border-b border-slate-100">
+              <h3 className="font-bold text-brand-text">Défi complété</h3>
+              <button onClick={() => setCompletedChallenge(null)} className="p-2 text-brand-gray hover:text-brand-text">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-4">
+              <div className="bg-green-50 rounded-xl p-4">
+                <p className="text-sm font-medium text-brand-text text-center">{completedChallenge.text}</p>
+              </div>
+
+              {completedChallenge.photo_url && (
+                <img src={completedChallenge.photo_url} alt="Preuve" className="w-full rounded-xl max-h-64 object-cover" />
+              )}
+
+              {completedChallenge.proof_text && completedChallenge.proof_type === "text" && (
+                <div className="bg-slate-50 rounded-xl p-4">
+                  <p className="text-sm text-brand-gray italic">"{completedChallenge.proof_text}"</p>
+                </div>
+              )}
+
+              {completedChallenge.proof_text && completedChallenge.proof_type === "photo" && (
+                <p className="text-sm text-brand-gray text-center">{completedChallenge.proof_text}</p>
+              )}
+
+              <div className="flex gap-3">
+                <button
+                  onClick={async () => {
+                    if (!completedChallenge.completion_id) return;
+                    setDeleting(true);
+                    try {
+                      await deleteDefi(completedChallenge.completion_id, playerId);
+                      setCompletedChallenge(null);
+                      fetchData();
+                    } catch (err) {
+                      console.error(err);
+                    } finally {
+                      setDeleting(false);
+                    }
+                  }}
+                  disabled={deleting}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 border border-red-200 bg-red-50 rounded-xl font-medium text-red-600 active:scale-[0.98] transition-all disabled:opacity-50"
+                >
+                  <Trash2 size={16} />
+                  {deleting ? "..." : "Supprimer"}
+                </button>
+                <button
+                  onClick={async () => {
+                    if (!completedChallenge.completion_id) return;
+                    pendingReopen.current = { index: completedChallenge.index, text: completedChallenge.text, completed: false } as Challenge;
+                    setDeleting(true);
+                    try {
+                      await deleteDefi(completedChallenge.completion_id, playerId);
+                      await fetchData();
+                      setCompletedChallenge(null);
+                      setDeleting(false);
+                      setTimeout(() => {
+                        setSelectedChallenge(pendingReopen.current);
+                        pendingReopen.current = null;
+                      }, 100);
+                    } catch (err) {
+                      console.error(err);
+                      setDeleting(false);
+                      pendingReopen.current = null;
+                    }
+                  }}
+                  disabled={deleting}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 glass-button text-white rounded-xl font-bold disabled:opacity-50"
+                >
+                  <RefreshCw size={16} />
+                  {deleting ? "..." : "Modifier"}
                 </button>
               </div>
             </div>

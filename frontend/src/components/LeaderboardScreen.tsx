@@ -64,12 +64,12 @@ export default function LeaderboardScreen({ playerId }: Props) {
 
   return (
     <div className="flex flex-col bg-slate-50 min-h-screen pb-24">
-      <div className="px-6 pt-12 pb-6 bg-brand-dark text-white">
+      <div className="px-6 pt-12 pb-6 bg-white border-b border-slate-100">
         <div className="flex items-center gap-3">
           <img src="/logo.png" alt="Logo" className="w-12 h-12 object-contain" />
           <div>
-            <h2 className="text-xl font-bold">Classement 🏆</h2>
-            <p className="text-sm text-white/60">Top Builders 2026</p>
+            <h2 className="text-xl font-bold text-brand-text">Classement 🏆</h2>
+            <p className="text-sm text-brand-gray">Top Builders 2026</p>
           </div>
         </div>
       </div>

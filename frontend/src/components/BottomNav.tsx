@@ -15,7 +15,7 @@ interface Props {
 
 export default function BottomNav({ active, onChange }: Props) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-brand-dark px-4 py-3 flex justify-around items-center z-50 safe-area-pb">
+    <div className="fixed bottom-0 left-0 right-0 bg-blue-950 px-4 py-3 flex justify-around items-center z-50 safe-area-pb">
       {tabs.map(({ id, icon: Icon, label }) => (
         <button
           key={id}
