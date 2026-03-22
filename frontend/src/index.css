@@ -1,0 +1,143 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-brand-primary: #204CE5;
+  --color-brand-dark: #001AB3;
+  --color-brand-light: #527EFF;
+  --color-brand-cyan: #67C6E0;
+  --color-brand-text: #112337;
+  --color-brand-gray: #585E6A;
+}
+
+@layer base {
+  body {
+    @apply font-sans text-brand-text bg-slate-50;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+.glass-button {
+  background: rgba(59, 60, 117, 0.9);
+  box-shadow: 6px 6px 9px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.glass-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 8px 8px 12px rgba(0, 0, 0, 0.25);
+}
+
+.glass-button:active {
+  transform: translateY(0);
+}
+
+.bingo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 8px;
+  gap: 6px;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 120px;
+  overflow: hidden;
+}
+
+.bingo-card .card-emoji {
+  font-size: 28px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.bingo-card .card-text {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #1e293b;
+  text-transform: uppercase;
+}
+
+.bingo-card:active {
+  transform: scale(0.95);
+}
+
+.bingo-card.completed {
+  border-color: #22c55e;
+  opacity: 0.85;
+}
+
+.bingo-card.completed .card-text {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+/* Card color variants — unified light blue with logo watermark */
+.card-blue,
+.card-purple,
+.card-pink,
+.card-orange,
+.card-cyan,
+.card-green,
+.card-yellow,
+.card-red,
+.card-indigo {
+  background: linear-gradient(135deg, #e0ecff, #c9dbff);
+  border-color: #93b4fd;
+}
+
+.bingo-card .card-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bingo-card .card-emoji,
+.bingo-card .card-text {
+  position: relative;
+  z-index: 1;
+}
+
+.bingo-card.completed.card-blue,
+.bingo-card.completed.card-purple,
+.bingo-card.completed.card-pink,
+.bingo-card.completed.card-orange,
+.bingo-card.completed.card-cyan,
+.bingo-card.completed.card-green,
+.bingo-card.completed.card-yellow,
+.bingo-card.completed.card-red,
+.bingo-card.completed.card-indigo {
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  border-color: #22c55e;
+}
+
+.bingo-banner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  background: linear-gradient(135deg, #67c6e0, #204ce5);
+  color: white;
+  padding: 12px 32px;
+  font-weight: 900;
+  font-size: 28px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(32, 76, 229, 0.3);
+  z-index: 20;
+  pointer-events: none;
+  white-space: nowrap;
+  letter-spacing: 2px;
+}
